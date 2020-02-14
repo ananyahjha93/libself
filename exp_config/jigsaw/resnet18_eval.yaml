@@ -1,0 +1,43 @@
+TRAINER:
+  GPUS: -1
+  GPU_IDS: [0, 1, 2, 3]
+  EPOCHS: 30
+  BATCH_SIZE: 128
+  CHECKPOINT: 'results/jigsaw/resnet_18/_ckpt_epoch_63.ckpt'
+  WORKERS: 16
+  LOGGER: 'default'
+  LOG_DIR: ''
+
+OPTIMIZER:
+  TYPE: "adam"
+  LR: 0.0001
+  WEIGHT_DECAY: 0.
+  BETAS: (0.9, 0.999)
+
+SCHEDULER:
+  TYPE: "step"
+  GAMMA: 0.5
+  STEP_SIZE: 10
+
+DATASET:
+  NAME: "jigsaw_dataset"
+  ROOT: "/misc/kcgscratch1/ChoGroup/falcon/datasets/imagenet_12"
+  TRAIN_DIR: "imagenet_12_train"
+  VAL_DIR: "imagenet_12_val"
+
+SSL_TASK:
+  NAME: "jigsaw"
+  ADDITIONAL_FILE: "ssl_framework/misc/jigsaw/permutations_1000.npy"
+  CLASSES: 1000
+
+MODEL:
+  NAME: "jigsaw_image_model"
+  TRUNK:
+    NAME: "resnet_18"
+  HEAD:
+    POOL: 'avg'
+    PARAMS: [{"dims": [16384, 1000], "dropout": [], "dropout_probs": [], "in_channels": 256},
+             {"dims": [8192, 1000], "dropout": [], "dropout_probs": [], "in_channels": 512}]
+    APPLY_BATCHNORM: True
+  FEATURE_EVAL_MODE: True
+  EVAL_FEATURES: ['res4', 'res5']

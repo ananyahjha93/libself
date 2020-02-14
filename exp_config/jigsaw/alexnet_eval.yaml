@@ -1,0 +1,46 @@
+TRAINER:
+  GPUS: -1
+  GPU_IDS: [4, 5, 6, 7]
+  EPOCHS: 30
+  BATCH_SIZE: 128
+  CHECKPOINT: 'results/jigsaw/alexnet/_ckpt_epoch_69.ckpt'
+  WORKERS: 16
+  LOGGER: 'default'
+  LOG_DIR: ''
+
+OPTIMIZER:
+  TYPE: "adam"
+  LR: 0.0001
+  WEIGHT_DECAY: 0.
+  BETAS: (0.9, 0.999)
+
+SCHEDULER:
+  TYPE: "step"
+  GAMMA: 0.5
+  STEP_SIZE: 10
+
+DATASET:
+  NAME: "jigsaw_dataset"
+  ROOT: "/misc/kcgscratch1/ChoGroup/falcon/datasets/imagenet_12"
+  TRAIN_DIR: "imagenet_12_train"
+  VAL_DIR: "imagenet_12_val"
+
+SSL_TASK:
+  NAME: "jigsaw"
+  ADDITIONAL_FILE: "ssl_framework/misc/jigsaw/permutations_1000.npy"
+  CLASSES: 1000
+
+MODEL:
+  NAME: "jigsaw_image_model"
+  TRUNK:
+    NAME: "jigsaw_alexnet"
+  HEAD:
+    POOL: 'max'
+    PARAMS: [{"dims": [16224, 4096, 1000], "dropout": [False], "dropout_probs": [0.], "in_channels": 96},
+             {"dims": [9216, 4096, 1000], "dropout": [False], "dropout_probs": [0.], "in_channels": 256},
+             {"dims": [13824, 4096, 1000], "dropout": [False], "dropout_probs": [0.], "in_channels": 384},
+             {"dims": [13824, 4096, 1000], "dropout": [False], "dropout_probs": [0.], "in_channels": 384},
+             {"dims": [1024, 4096, 1000], "dropout": [False], "dropout_probs": [0.], "in_channels": 256}]
+    APPLY_BATCHNORM: True
+  FEATURE_EVAL_MODE: True
+  EVAL_FEATURES: ['conv1', 'conv2', 'conv3', 'conv4', 'conv5']

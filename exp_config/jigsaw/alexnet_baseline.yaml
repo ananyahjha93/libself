@@ -1,0 +1,41 @@
+TRAINER:
+  GPUS: -1
+  GPU_IDS: [4, 5, 6, 7]
+  EPOCHS: 70
+  BATCH_SIZE: 256
+  CHECKPOINT: 'results/jigsaw/alexnet'
+  WORKERS: 32
+  LOGGER: 'default'
+  LOG_DIR: ''
+
+OPTIMIZER:
+  TYPE: "sgd"
+  LR: 0.01
+  MOMENTUM: 0.9
+  WEIGHT_DECAY: 5e-4
+  NESTEROV: False
+
+SCHEDULER:
+  TYPE: "step"
+  GAMMA: 0.1
+  STEP_SIZE: 30
+
+DATASET:
+  NAME: "jigsaw_dataset"
+  ROOT: "/misc/kcgscratch1/ChoGroup/falcon/datasets/imagenet_12"
+  TRAIN_DIR: "imagenet_12_train"
+  VAL_DIR: "imagenet_12_val"
+
+SSL_TASK:
+  NAME: "jigsaw"
+  ADDITIONAL_FILE: "ssl_framework/misc/jigsaw/permutations_1000.npy"
+  CLASSES: 1000
+
+MODEL:
+  NAME: "jigsaw_image_model"
+  TRUNK:
+    NAME: "jigsaw_alexnet"
+  HEAD:
+    PARAMS: [{"dims": [4608, 4096, 1000], "dropout": [True], "dropout_probs": [0.5]}]
+    APPLY_BATCHNORM: False
+  FEATURE_EVAL_MODE: False
